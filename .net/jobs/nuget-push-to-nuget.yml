@@ -9,8 +9,7 @@ parameters:
 jobs:
   - deployment: ${{ parameters.jobName }}
     displayName: ${{ parameters.jobDisplayName }}
-    pool:
-       name: ${{ parameters.pool }}
+    pool: ${{ parameters.pool }}
     variables:
         nugetVersion: "t"
         allowPackageConflicts: ${{ parameters.allowPackageConflicts }}

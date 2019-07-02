@@ -1,5 +1,6 @@
 parameters:
   artifactName: 'nuget'
+  nugetPackageVersion: ''
   
 steps:
 - template: ../steps/load-variables.yml
@@ -8,14 +9,6 @@ steps:
   inputs:
     command: 'restore'
     restoreSolution: '**/**/*.sln'
-
-- task: Powershell@2
-  name: SetNugetSemVerVersion
-  displayName: SetNugetSemVerVersion
-  inputs:
-    targetType: inline
-    script: |
-        $(Build.SourcesDirectory)/build/Set-NugetSemVersion.ps1
 
 - task: DotNetCoreCLI@2
   displayName: Pack

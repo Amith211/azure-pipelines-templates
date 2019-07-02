@@ -47,7 +47,7 @@ jobs:
               nuGetFeedType: 'external'
               publishFeedCredentials: ${{ parameters.publishFeedCredentials }}
               allowPackageConflicts: ${{ parameters.allowPackageConflicts }}
-          condition: ne(variables['isDuplicate'], 'true')
+            condition: ne(variables['isDuplicate'], 'true')
     condition: > 
       and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), 
         or(eq(variables['Build.SourceBranch'], 'refs/heads/master'),

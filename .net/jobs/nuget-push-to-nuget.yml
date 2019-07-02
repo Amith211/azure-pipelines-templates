@@ -39,6 +39,15 @@ jobs:
                   Write-Host $isDuplicate;
             condition: eq(variables['allowPackageConflicts'], true)
 
+          - task: Powershell@2
+            name: setNugetIsDuplicateVarDebug
+            displayName: 'Var Debug'
+            inputs:
+              targetType: inline
+              script: |
+                Write-Host $env:isDuplicate;
+                Write-Host $(isDuplicate);
+
           - task: NuGetCommand@2
             displayName: Publish to Nuget
             inputs:

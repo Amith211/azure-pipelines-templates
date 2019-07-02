@@ -1,0 +1,34 @@
+parameters:
+  jobName: 'DeployNugetAzureArtifacts'
+  jobDdisplayName: 'Deploy to Azure Artifacts'
+  pool: 'Default'
+  artifactName: 'nuget'
+  publishVstsFeed: ''
+  allowPackageConflicts: true
+
+jobs:
+  - deployment: ${{ parameters.jobName }}
+    displayName: ${{ parameters.jobDisplayName }}
+    pool:
+       name: ${{ parameters.pool }}
+    variables:
+        nugetVersion: "t"
+    environment: PreviewAzure
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: DownloadPipelineArtifact@1
+            inputs:
+              artifactName: ${{ parameters.artifactName }}
+              targetPath: $(Build.ArtifactStagingDirectory)
+
+          - task: NuGetCommand@2
+            displayName: Publish Preview to Artifacts
+            inputs:
+              command: 'push'
+              packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
+              nuGetFeedType: 'internal'
+              publishVstsFeed: ${{ parameters.publishVstsFeed }}
+              allowPackageConflicts: ${{ parameters.allowPackageConflicts }}
+    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), startswith(variables['Build.SourceBranch'], 'refs/heads/release/'), startswith(variables['Build.SourceBranch'], 'refs/heads/azure-pipelines-test/')) )

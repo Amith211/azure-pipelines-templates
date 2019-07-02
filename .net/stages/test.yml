@@ -1,0 +1,23 @@
+parameters:
+  pool: 'Default'
+
+stages:
+- stage: test
+  displayName: 'Test.'
+  jobs:
+  - job: test
+    displayName: 'Run Tests'
+    pool: ${{ parameters.pool }}
+    steps:
+    - checkout: none
+    - task: DownloadPipelineArtifact@1
+      inputs:
+        artifactName: 'drop'
+
+    - task: DotNetCoreCLI@2
+      displayName: Test
+      inputs:
+        command: 'test'
+        projects: '**/*[Tt]ests/*.csproj'
+        arguments: '--logger trx --collect "Code coverage"'
+        nobuild: true

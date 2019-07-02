@@ -1,0 +1,43 @@
+parameters:
+  artifactName: 'nuget'
+  
+steps:
+- template: ../steps/load-variables.yml
+- task: DotNetCoreCLI@2
+  displayName: Restore
+  inputs:
+    command: 'restore'
+    restoreSolution: '**/**/*.sln'
+
+- task: Powershell@2
+  name: SetNugetSemVerVersion
+  displayName: SetNugetSemVerVersion
+  inputs:
+    targetType: inline
+    script: |
+        $(Build.SourcesDirectory)/build/Set-NugetSemVersion.ps1
+
+- task: DotNetCoreCLI@2
+  displayName: Pack
+  inputs:
+    command: 'pack'
+    nobuild: true
+    versioningScheme: 'byEnvVar'
+    versionEnvVar: nugetVersion
+    configuration: $(BuildConfiguration)
+    packageFolder: $(Build.ArtifactStagingDirectory)/package
+    arguments: '--no-build --no-restore'
+
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(Build.ArtifactStagingDirectory)'
+    Contents: '**/*.nupkg'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)/Package'
+  #condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+
+- task: PublishPipelineArtifact@0
+  displayName: 'Publish Artifact ${{ parameters.artifactName }}'
+  inputs:
+    artifactName: ${{ parameters.artifactName }}
+    targetPath: $(Build.ArtifactStagingDirectory)/package
+  #condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))  

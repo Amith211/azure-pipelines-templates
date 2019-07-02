@@ -1,0 +1,55 @@
+parameters:
+  stageName: 'Deploy'
+  stageDisplayName: 'Deploy'
+  jobName: 'NugetPack'
+  jobDisplayName: 'Pack Nuget'
+  pool: 'Default'
+  artifactName: 'nuget'
+  publishAzureJobName: 'DeployNugetAzureArtifacts'
+  publishAzureJobDisplayName: 'Deploy Preview to Azure Artifacts'
+  publishVstsFeed: ''
+  allowPackageConflicts: true
+  publishNugetJobName: 'DeployNuget'
+  publishNugetJobDisplayName: 'Deploy to Nuget'
+  publishFeedCredentials: ''
+  
+stages:
+- stage: ${{ parameters.stageName }}
+  displayName: ${{ parameters.stageDisplayName }}
+  jobs:
+  - job: ${{ parameters.jobName }}
+    displayName: ${{ parameters.jobDisplayName }}
+    pool: ${{ parameters.pool }}
+    steps:
+    - checkout: none
+    - template: ../steps/load-build-variables.yml
+    - task: DownloadPipelineArtifact@1
+      inputs:
+        artifactName: 'drop'
+        #targetPath: $(Build.ArtifactStagingDirectory)
+        targetPath: '$(Build.SourcesDirectory)'
+    
+    - template: ../steps/nuget-pack.yml
+      parameters:
+        artifactName: ${{ parameters.artifactName }}
+
+  - template: ../jobs/nuget-deploy-to-azureArtifacts.yml
+    parameters:
+      jobName: ${{ parameters.publishAzureJobName }}
+      jobDisplayName: ${{ parameters.publishAzureJobDisplayName }}
+      pool: ${{ parameters.pool }}
+      artifactName: ${{ parameters.artifactName }}
+      publishVstsFeed: ${{ parameters.publishVstsFeed }}
+      allowPackageConflicts: ${{ parameters.allowPackageConflicts }}
+
+  - template: ../jobs/nuget-deploy-to-nuget.yml
+    parameters:
+      jobName: ${{parameters.publishNugetJobName }}
+      jobDisplayName: ${{ parameters.publishNugetJobDisplayName }}
+      pool: ${{ parameters.pool }}
+      artifactName: ${{ parameters.artifactName }}
+      publishFeedCredentials: ${{parameters.publishFeedCredentials }}
+      allowPackageConflicts: ${{ parameters.allowPackageConflicts }}
+      
+
+          

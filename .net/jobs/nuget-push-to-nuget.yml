@@ -12,6 +12,7 @@ jobs:
     pool: ${{ parameters.pool }}
     variables:
         nugetVersion: "t"
+        isDuplicate: false
         allowPackageConflicts: ${{ parameters.allowPackageConflicts }}
     environment: PreviewAzure
     strategy:
@@ -35,7 +36,7 @@ jobs:
                    
                   echo "##vso[task.setvariable variable=isDuplicate]$isDuplicate";
 
-                  Write-Debug $isDuplicate;
+                  Write-Host $isDuplicate;
             condition: eq(variables['allowPackageConflicts'], 'true')
 
           - task: NuGetCommand@2

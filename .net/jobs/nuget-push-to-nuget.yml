@@ -48,4 +48,7 @@ jobs:
               publishFeedCredentials: ${{ parameters.publishFeedCredentials }}
               allowPackageConflicts: ${{ parameters.allowPackageConflicts }}
           condition: ne(variables['isDuplicate'], 'true')
-    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), startswith(variables['Build.SourceBranch'], 'refs/heads/release/'), startswith(variables['Build.SourceBranch'], 'refs/heads/azure-pipelines-test/')) )
+    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), | 
+                or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), |
+                  startswith(variables['Build.SourceBranch'], 'refs/heads/release/'), |
+                  startswith(variables['Build.SourceBranch'], 'refs/heads/azure-pipelines-test')) )

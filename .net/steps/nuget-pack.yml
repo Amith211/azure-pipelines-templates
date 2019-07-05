@@ -1,10 +1,11 @@
 parameters:
   artifactName: 'nuget'
   nugetPackageVersion: ''
+
+variables:
+  nugetVersionVar: ${{ parameters.nugetPackageVersion }}
   
 steps:
-  variables:
-    nugetVersionVar: ${{ parameters.nugetPackageVersion }}
 - template: ../steps/load-variables.yml
 - task: DotNetCoreCLI@2
   displayName: Restore

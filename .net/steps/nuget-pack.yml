@@ -1,9 +1,6 @@
 parameters:
   artifactName: 'nuget'
   nugetPackageVersion: ''
-
-variables:
-  nugetVersionVar: ${{ parameters.nugetPackageVersion }}
   
 steps:
 - template: ../steps/load-variables.yml
@@ -18,11 +15,12 @@ steps:
   inputs:
     command: 'pack'
     nobuild: true
-    versioningScheme: 'byEnvVar'
+    versioningScheme: 'off'
+    #'byEnvVar'
     versionEnvVar: nugetVersion
     configuration: $(BuildConfiguration)
     packageFolder: $(Build.ArtifactStagingDirectory)/package
-    arguments: '--no-build --no-restore'
+    arguments: '--no-build --no-restore /p:Version= ${{ parameters.nugetPackageVersion }}'
 
 - task: CopyFiles@2
   inputs:

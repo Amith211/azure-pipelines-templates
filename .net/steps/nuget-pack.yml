@@ -3,8 +3,8 @@ parameters:
   nugetPackageVersion: ''
   
 steps:
-variables:
-  nugetVersionVar: ${{ parameters.nugetPackageVersion }}
+  variables:
+    nugetVersionVar: ${{ parameters.nugetPackageVersion }}
 - template: ../steps/load-variables.yml
 - task: DotNetCoreCLI@2
   displayName: Restore

@@ -32,7 +32,7 @@ jobs:
               script: |
                  . $(Build.SourcesDirectory)/build/Get-IsDuplicateNugetPackage.ps1
                   
-                  $isDuplicate = Get-IsDuplicateNugetPackage -PackageId "LCattell.ReflectionExtensions" -Version "$env:GitVersion_NuGetVersionV2";
+                  $isDuplicate = Get-IsDuplicateNugetPackage -PackageId "LCattell.ReflectionExtensions" -Version "$env:nugetVersion";
                    
                   Write-Output ("##vso[task.setvariable variable=isDuplicate;]$isDuplicate");
 

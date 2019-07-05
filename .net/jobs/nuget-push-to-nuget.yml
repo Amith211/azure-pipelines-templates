@@ -5,7 +5,7 @@ parameters:
   artifactName: 'nuget'
   publishFeedCredentials: ''
   allowPackageConflicts: true
-  nugetPackageVersion: ''
+  nugetPackageVersion: 'a'
 
 jobs:
   - deployment: ${{ parameters.jobName }}
@@ -46,7 +46,7 @@ jobs:
             inputs:
               targetType: inline
               script: |
-                Write-Host "'Env:nugetVersion:'" "$env:nugetVersion"
+                Write-Host "'Env:nugetVersion:'" "$env:nugetVersion, $(nugetVersion)"
                 Write-Host "'env:IsDuplicate:' $env:isDuplicate";
                 Write-Host "IsDuplicate:" $(isDuplicate);
 

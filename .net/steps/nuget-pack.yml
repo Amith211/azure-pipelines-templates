@@ -10,17 +10,25 @@ steps:
     command: 'restore'
     restoreSolution: '**/**/*.sln'
 
-- task: DotNetCoreCLI@2
-  displayName: Pack
-  inputs:
-    command: 'pack'
-    nobuild: true
-    versioningScheme: 'off'
-    #'byEnvVar'
-    versionEnvVar: nugetVersion
-    configuration: $(BuildConfiguration)
-    packageFolder: $(Build.ArtifactStagingDirectory)/package
-    arguments: '--no-build --no-restore /p:Version= ${{ parameters.nugetPackageVersion }}'
+- task: Powershell@2
+      name: Pack
+      displayName: SetNugetSemVerVersion
+      inputs:
+        targetType: inline
+        script: |
+          dotnet pack --no-build --no-restore /p:Version=${{ parameters.nugetPackageVersion }}
+
+#- task: DotNetCoreCLI@2
+#  displayName: Pack
+#  inputs:
+#    command: 'pack'
+#    nobuild: true
+#    versioningScheme: 'off'
+#    #'byEnvVar'
+#    versionEnvVar: nugetVersion
+#    configuration: $(BuildConfiguration)
+#    packageFolder: $(Build.ArtifactStagingDirectory)/package
+#    arguments: '--no-build --no-restore /p:Version= ${{ parameters.nugetPackageVersion }}'
 
 - task: CopyFiles@2
   inputs:

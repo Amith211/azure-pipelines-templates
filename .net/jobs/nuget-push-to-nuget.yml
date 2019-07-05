@@ -5,7 +5,7 @@ parameters:
   artifactName: 'nuget'
   publishFeedCredentials: ''
   allowPackageConflicts: true
-  nugetPackageVersion: 'a'
+  nugetPackageVersion: ''
 
 jobs:
   - deployment: ${{ parameters.jobName }}

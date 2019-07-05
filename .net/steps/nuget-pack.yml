@@ -11,14 +11,14 @@ steps:
     restoreSolution: '**/**/*.sln'
 
 - task: Powershell@2
-  variables:
-    nu: ${{ parameters.nugetPackageVersion }}
+  #variables:
+  #  nu: ${{ parameters.nugetPackageVersion }}
   name: Pack
   displayName: SetNugetSemVerVersion
   inputs:
     targetType: inline
     script: |
-      dotnet pack --no-build --no-restore /p:Version=$env:nu
+      dotnet pack --no-build --no-restore /p:Version=${{ parameters.nugetPackageVersion }}
 
 #- task: DotNetCoreCLI@2
 #  displayName: Pack

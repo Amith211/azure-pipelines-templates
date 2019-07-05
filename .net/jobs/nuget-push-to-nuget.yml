@@ -46,7 +46,10 @@ jobs:
             inputs:
               targetType: inline
               script: |
-                Write-Host "'Env:nugetVersion:'" "$env:nugetVersion, $(nugetVersion), "param:" ${{ parameters.nugetPackageVersion }}"
+                Write-Host "'Env:nugetVersion:'" "$env:nugetVersion
+                Write-Host "expanded:" $(nugetVersion)"
+                Write-Host "param:" ${{ parameters.nugetPackageVersion }}"
+                
                 Write-Host "'env:IsDuplicate:' $env:isDuplicate";
                 Write-Host "IsDuplicate:" $(isDuplicate);
 

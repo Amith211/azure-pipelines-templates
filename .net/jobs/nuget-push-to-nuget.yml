@@ -11,7 +11,7 @@ jobs:
     displayName: ${{ parameters.jobDisplayName }}
     pool: ${{ parameters.pool }}
     variables:
-        nugetVersion: "t"
+        nugetVersion: $(nugetVersion)
         isDuplicate: false
         allowPackageConflicts: ${{ parameters.allowPackageConflicts }}
     environment: PreviewAzure

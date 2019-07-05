@@ -5,14 +5,14 @@ parameters:
   artifactName: 'nuget'
   publishFeedCredentials: ''
   allowPackageConflicts: true
-  nugetVersion: $[variables.nugetVersion]
+  nugetPackageVersion: $[variables.nugetVersion]
 
 jobs:
   - deployment: ${{ parameters.jobName }}
     displayName: ${{ parameters.jobDisplayName }}
     pool: ${{ parameters.pool }}
     variables:
-        nugetVersion: ${{ parameters.nugetVersion }}
+        nugetVersion: ${{ parameters.nugetPackageVersion }}
         isDuplicate: false
         allowPackageConflicts: ${{ parameters.allowPackageConflicts }}
     environment: PreviewAzure

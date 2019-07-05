@@ -1,7 +1,7 @@
 parameters:
   artifactName: 'nuget'
-  nugetPackageVersion: ''
-  
+  nugetPackageVersion: '0.0.1-beta99'
+
 steps:
 - template: ../steps/load-variables.yml
 - task: DotNetCoreCLI@2

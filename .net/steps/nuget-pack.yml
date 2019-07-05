@@ -14,11 +14,12 @@ steps:
   #variables:
   #  nu: ${{ parameters.nugetPackageVersion }}
   name: Pack
-  displayName: SetNugetSemVerVersion
+  displayName: Pack
   inputs:
     targetType: inline
     script: |
-      dotnet pack --no-build --no-restore /p:Version=${{ parameters.nugetPackageVersion }}
+      dotnet pack --no-build --no-restore --configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)/package `
+         /p:Version=${{ parameters.nugetPackageVersion }}
 
 #- task: DotNetCoreCLI@2
 #  displayName: Pack

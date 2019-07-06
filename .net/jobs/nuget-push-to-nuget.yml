@@ -51,7 +51,7 @@ jobs:
                 Write-Host "param_ ${{ parameters.nugetPackageVersion }}";
 
                 Write-Host "env_IsDuplicate_ $env:isDuplicate";
-                Write-Host "IsDuplicate_ $($env:isDuplicate);
+                Write-Host "IsDuplicate_ ${$env:isDuplicate};
 
           #- task: NuGetCommand@2
           #  displayName: Publish to Nuget

@@ -3,7 +3,7 @@ parameters:
   jobDisplayName: 'Deploy to Nuget'
   pool: 'Default'
   artifactName: 'nuget'
-  publishFeedCredentials: ''
+  nuGetServiceConnections: ''
   allowPackageConflicts: true
   nugetPackageVersion: ''
 
@@ -25,43 +25,19 @@ jobs:
               artifactName: ${{ parameters.artifactName }}
               targetPath: $(Build.ArtifactStagingDirectory)
 
+          - task: NuGetAuthenticate@0
+            inputs:
+              nuGetServiceConnections ${{ parameters.nuGetServiceConnections }}
+
+          - task: NuGetToolInstaller@1
+
           - task: Powershell@2
-            name: setNugetIsDuplicateVar
-            displayName: 'Nuget Conflict Check'
+            name: nuGetPush
+            displayName: 'Nuget Push'
             inputs:
               targetType: inline
               script: |
-                 . $(Build.SourcesDirectory)/build/Get-IsDuplicateNugetPackage.ps1
-                  
-                  $isDuplicate = Get-IsDuplicateNugetPackage -PackageId "LCattell.ReflectionExtensions" -Version "$env:nugetVersion";
-                   
-                  Write-Output ("##vso[task.setvariable variable=isDuplicate;]$isDuplicate");
-
-                  Write-Host $isDuplicate;
-            condition: eq(variables['allowPackageConflicts'], true)
-
-          - task: Powershell@2
-            name: setNugetIsDuplicateVarDebug
-            displayName: 'Var Debug'
-            inputs:
-              targetType: inline
-              script: |
-                Write-Host "Env_nugetVersion_ $($env:nugetVersion)";
-                Write-Host "expanded_ $(nugetVersion)";
-                Write-Host "param_ ${{ parameters.nugetPackageVersion }}";
-
-                Write-Host "env_IsDuplicate_ $env:isDuplicate";
-                Write-Host "IsDuplicate_ ${$env:isDuplicate};
-
-          #- task: NuGetCommand@2
-          #  displayName: Publish to Nuget
-          #  inputs:
-          #    command: 'push'
-          #    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
-          #    nuGetFeedType: 'external'
-          #    publishFeedCredentials: ${{ parameters.publishFeedCredentials }}
-          #    allowPackageConflicts: ${{ parameters.allowPackageConflicts }}
-          #  condition: ne(variables['isDuplicate'], true)
+                 nuget push -ApiKey AzurePipeline -Source https://api.nuget.org/v3/index.json *.nupkg -NoSymbols -SkipDuplicate ${{ parameters.allowPackageConflicts }}
     condition: > 
       and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), 
         or(eq(variables['Build.SourceBranch'], 'refs/heads/master'),

@@ -23,6 +23,9 @@ jobs:
               artifactName: ${{ parameters.artifactName }}
               targetPath: $(Build.ArtifactStagingDirectory)
           
+          - task: NuGetAuthenticate@0
+          - task: NuGetToolInstaller@1
+
           - task: Powershell@2
             name: nuGetPush
             displayName: 'Nuget Push'

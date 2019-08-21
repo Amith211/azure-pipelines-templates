@@ -27,7 +27,7 @@ jobs:
 
           - task: NuGetAuthenticate@0
             inputs:
-              nuGetServiceConnections ${{ parameters.nuGetServiceConnections }}
+              nuGetServiceConnections: ${{ parameters.nuGetServiceConnections }}
 
           - task: NuGetToolInstaller@1
 

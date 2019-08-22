@@ -40,7 +40,8 @@ jobs:
             inputs:
               targetType: inline
               script: |
-                 nuget push -ApiKey $env:apiKey -Source https://api.nuget.org/v3/index.json $(Build.ArtifactStagingDirectory)/**/*.nupkg -NoSymbols -SkipDuplicate ${{ parameters.allowPackageConflicts }}
+                 nuget push -ApiKey $env:apiKey -Source https://api.nuget.org/v3/index.json $(Build.ArtifactStagingDirectory)/**/*.nupkg  `
+                  -NoSymbols -SkipDuplicate $env:ALLOWPACKAGECONFLICTS
     condition: > 
       and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), 
         or(eq(variables['Build.SourceBranch'], 'refs/heads/master'),

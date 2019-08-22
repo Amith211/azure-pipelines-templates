@@ -6,6 +6,7 @@ parameters:
   nuGetServiceConnections: ''
   allowPackageConflicts: true
   nugetPackageVersion: ''
+  environment: 'NuGet_Org'
 
 jobs:
   - deployment: ${{ parameters.jobName }}
@@ -15,7 +16,7 @@ jobs:
         nugetVersion: ${{ parameters.nugetPackageVersion }}
         isDuplicate: false
         allowPackageConflicts: ${{ parameters.allowPackageConflicts }}
-    environment: 'NuGet.org'
+    environment: ${{ parameters.environment }}
     strategy:
       runOnce:
         deploy:

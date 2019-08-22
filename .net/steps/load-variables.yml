@@ -2,7 +2,6 @@ steps:
     - task: DownloadPipelineArtifact@1
       inputs:
         artifactName: 'vars'
-        #targetPath: $(Build.ArtifactStagingDirectory)
         targetPath: '$(Build.SourcesDirectory)'
 
     - task: variablerehydration@0

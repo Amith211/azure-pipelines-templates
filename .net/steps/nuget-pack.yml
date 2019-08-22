@@ -11,38 +11,24 @@ steps:
     restoreSolution: '**/**/*.sln'
 
 - task: Powershell@2
-  #variables:
-  #  nu: ${{ parameters.nugetPackageVersion }}
   name: Pack
   displayName: Pack
+  env:
+    packageVersion: ${{ parameters.nugetPackageVersion }}
   inputs:
     targetType: inline
     script: |
       dotnet pack --no-build --no-restore --configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)/package `
-         /p:Version=${{ parameters.nugetPackageVersion }}
-
-#- task: DotNetCoreCLI@2
-#  displayName: Pack
-#  inputs:
-#    command: 'pack'
-#    nobuild: true
-#    versioningScheme: 'off'
-#    #'byEnvVar'
-#    versionEnvVar: nugetVersion
-#    configuration: $(BuildConfiguration)
-#    packageFolder: $(Build.ArtifactStagingDirectory)/package
-#    arguments: '--no-build --no-restore /p:Version= ${{ parameters.nugetPackageVersion }}'
+         /p:Version=$env:packageVersion
 
 - task: CopyFiles@2
   inputs:
     SourceFolder: '$(Build.ArtifactStagingDirectory)'
     Contents: '**/*.nupkg'
     TargetFolder: '$(Build.ArtifactStagingDirectory)/Package'
-  #condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
 - task: PublishPipelineArtifact@0
   displayName: 'Publish Artifact ${{ parameters.artifactName }}'
   inputs:
     artifactName: ${{ parameters.artifactName }}
     targetPath: $(Build.ArtifactStagingDirectory)/package
-  #condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))  

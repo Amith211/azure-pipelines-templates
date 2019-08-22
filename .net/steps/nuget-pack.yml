@@ -11,15 +11,15 @@ steps:
     restoreSolution: '**/**/*.sln'
 
 - task: Powershell@2
-  variables:
-    packageVersion: ${{ parameters.nugetPackageVersion }}
   name: Pack
   displayName: Pack
+  env:
+    packageVersion: ${{ parameters.nugetPackageVersion }}
   inputs:
     targetType: inline
     script: |
       dotnet pack --no-build --no-restore --configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)/package `
-         /p:Version=$(packageVersion)
+         /p:Version=$env:packageVersion
 
 #- task: DotNetCoreCLI@2
 #  displayName: Pack

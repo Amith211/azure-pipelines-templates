@@ -1,6 +1,7 @@
 parameters:
   artifactName: 'nuget'
-  
+  nugetPackageVersion: '0.0.1-beta99'
+
 steps:
 - template: ../steps/load-variables.yml
 - task: DotNetCoreCLI@2
@@ -10,23 +11,27 @@ steps:
     restoreSolution: '**/**/*.sln'
 
 - task: Powershell@2
-  name: SetNugetSemVerVersion
-  displayName: SetNugetSemVerVersion
+  #variables:
+  #  nu: ${{ parameters.nugetPackageVersion }}
+  name: Pack
+  displayName: Pack
   inputs:
     targetType: inline
     script: |
-        $(Build.SourcesDirectory)/build/Set-NugetSemVersion.ps1
+      dotnet pack --no-build --no-restore --configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)/package `
+         /p:Version=${{ parameters.nugetPackageVersion }}
 
-- task: DotNetCoreCLI@2
-  displayName: Pack
-  inputs:
-    command: 'pack'
-    nobuild: true
-    versioningScheme: 'byEnvVar'
-    versionEnvVar: nugetVersion
-    configuration: $(BuildConfiguration)
-    packageFolder: $(Build.ArtifactStagingDirectory)/package
-    arguments: '--no-build --no-restore'
+#- task: DotNetCoreCLI@2
+#  displayName: Pack
+#  inputs:
+#    command: 'pack'
+#    nobuild: true
+#    versioningScheme: 'off'
+#    #'byEnvVar'
+#    versionEnvVar: nugetVersion
+#    configuration: $(BuildConfiguration)
+#    packageFolder: $(Build.ArtifactStagingDirectory)/package
+#    arguments: '--no-build --no-restore /p:Version= ${{ parameters.nugetPackageVersion }}'
 
 - task: CopyFiles@2
   inputs:

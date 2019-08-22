@@ -5,6 +5,7 @@ parameters:
   artifactName: 'nuget'
   publishVstsFeed: ''
   allowPackageConflicts: true
+  azureDevOpsOrg: ''
 
 jobs:
   - deployment: ${{ parameters.jobName }}
@@ -21,15 +22,17 @@ jobs:
             inputs:
               artifactName: ${{ parameters.artifactName }}
               targetPath: $(Build.ArtifactStagingDirectory)
+          
+          - task: NuGetAuthenticate@0
+          - task: NuGetToolInstaller@1
 
-          - task: NuGetCommand@2
-            displayName: Publish Preview to Artifacts
+          - task: Powershell@2
+            name: nuGetPush
+            displayName: 'Nuget Push'
             inputs:
-              command: 'push'
-              packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
-              nuGetFeedType: 'internal'
-              publishVstsFeed: ${{ parameters.publishVstsFeed }}
-              allowPackageConflicts: ${{ parameters.allowPackageConflicts }}
+              targetType: inline
+              script: |
+                 nuget push -ApiKey AzurePipeline -Source https://pkgs.dev.azure.com/${{ parameters.azureDevOpsOrg }}/_packaging/${{ parameters.publishVstsFeed }}/nuget/v3/index.json $(Build.ArtifactStagingDirectory)/**/*.nupkg -NoSymbols -SkipDuplicate ${{ parameters.allowPackageConflicts }}
     condition: > 
       and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), 
         or(eq(variables['Build.SourceBranch'], 'refs/heads/master'),

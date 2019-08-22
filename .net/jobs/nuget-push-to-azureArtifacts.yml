@@ -13,7 +13,7 @@ jobs:
     pool: ${{ parameters.pool }}
     variables:
         nugetVersion: "t"
-    environment: PreviewAzure
+    environment: AzureArtifacts
     strategy:
       runOnce:
         deploy:

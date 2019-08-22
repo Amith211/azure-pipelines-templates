@@ -15,7 +15,7 @@ jobs:
         nugetVersion: ${{ parameters.nugetPackageVersion }}
         isDuplicate: false
         allowPackageConflicts: ${{ parameters.allowPackageConflicts }}
-    environment: PreviewAzure
+    environment: 'NuGet.org'
     strategy:
       runOnce:
         deploy:

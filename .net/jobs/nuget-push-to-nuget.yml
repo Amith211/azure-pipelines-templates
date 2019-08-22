@@ -25,19 +25,22 @@ jobs:
               artifactName: ${{ parameters.artifactName }}
               targetPath: $(Build.ArtifactStagingDirectory)
 
-          - task: NuGetAuthenticate@0
-            inputs:
-              nuGetServiceConnections: ${{ parameters.nuGetServiceConnections }}
+          # ApiKeys not supported
+          # - task: NuGetAuthenticate@0
+          #   inputs:
+          #     nuGetServiceConnections: ${{ parameters.nuGetServiceConnections }}
 
           - task: NuGetToolInstaller@1
 
           - task: Powershell@2
             name: nuGetPush
             displayName: 'Nuget Push'
+            env:
+              apiKey: $(nuGet_Org_ApiKey)
             inputs:
               targetType: inline
               script: |
-                 nuget push -ApiKey AzurePipeline -Source https://api.nuget.org/v3/index.json *.nupkg -NoSymbols -SkipDuplicate ${{ parameters.allowPackageConflicts }}
+                 nuget push -ApiKey $env:apiKey -Source https://api.nuget.org/v3/index.json *.nupkg -NoSymbols -SkipDuplicate ${{ parameters.allowPackageConflicts }}
     condition: > 
       and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), 
         or(eq(variables['Build.SourceBranch'], 'refs/heads/master'),

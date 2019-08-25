@@ -2,11 +2,13 @@ parameters:
   jobName: 'DeployNugetAzureArtifacts'
   jobDdisplayName: 'Deploy to Azure Artifacts'
   pool: 'Default'
-  artifactName: 'nuget'
-  publishVstsFeed: ''
-  allowPackageConflicts: true
-  azureDevOpsOrg: ''
   environment: 'AzureArtifacts'
+  artifactName: 'nuget'
+  azureDevOpsOrg: ''
+  publishDevOpsFeed: ''
+  islegacyDevOpsUrl: false
+  nugetServerApiVersion: 'v3'
+  allowPackageConflicts: true
 
 jobs:
   - deployment: ${{ parameters.jobName }}
@@ -30,10 +32,25 @@ jobs:
           - task: Powershell@2
             name: nuGetPush
             displayName: 'Nuget Push'
+            env:
+              org: ${{ parameters.azureDevOpsOrg }}
+              feed: ${{ parameters.publishDevOpsFeed }}
+              isLegacyUrl: ${{ parameters.islegacyDevOpsUrl }}
+              apiVersion: ${{ parameters.nugetServerApiVersion }}
+              skipDiplicate: ${{ parameters.allowPackageConflicts }}
             inputs:
               targetType: inline
               script: |
-                 nuget push -ApiKey AzurePipeline -Source https://pkgs.dev.azure.com/${{ parameters.azureDevOpsOrg }}/_packaging/${{ parameters.publishVstsFeed }}/nuget/v3/index.json $(Build.ArtifactStagingDirectory)/**/*.nupkg -NoSymbols -SkipDuplicate ${{ parameters.allowPackageConflicts }}
+                $baseUrl = '';
+                if($env:isLegacyUrl -eq true)
+                {
+                  $baseUrl = "$env:ORG.pkgs.visualstudio.com"
+                } else
+                {
+                  $baseUrl = "pkgs.dev.azure.com"
+                }
+                nuget push -ApiKey AzurePipeline -Source https://$baseUrl/$env:ORG/_packaging/$env:feed/nuget/$env:APIVERSION/index.json ` 
+                 $(Build.ArtifactStagingDirectory)/**/*.nupkg -NoSymbols -SkipDuplicate $env:SKIPDUPLICATE
     condition: > 
       and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), 
         or(eq(variables['Build.SourceBranch'], 'refs/heads/master'),

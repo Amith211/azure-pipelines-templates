@@ -43,8 +43,8 @@ jobs:
               script: |
                 $orgUrl = '';
                 
-                Write-Debug "isLegacyUrl:- $env:isLegacyUrl";
-                Write-Debug "isLeacyUrl true:- $env:isLegacyUrl -eq $true";
+                Write-Verbose "isLegacyUrl:- $env:isLegacyUrl";
+                Write-Verbose "isLeacyUrl true:- $env:isLegacyUrl -eq $true";
 
                 if($env:isLegacyUrl -eq $true)
                 {
@@ -54,7 +54,7 @@ jobs:
                   $orgUrl = "pkgs.dev.azure.com/$env:ORG"
                 }
 
-                Write-Debug "url:- https://$orgUrl/_packaging/$env:FEED/nuget/$env:APIVERSION/index.json";
+                Write-Verbose "url:- https://$orgUrl/_packaging/$env:FEED/nuget/$env:APIVERSION/index.json";
 
                 nuget push -ApiKey AzurePipeline -Source https://$orgUrl/_packaging/$env:FEED/nuget/$env:APIVERSION/index.json `
                  $(Build.ArtifactStagingDirectory)/**/*.nupkg -NoSymbols -SkipDuplicate $env:SKIPDUPLICATE

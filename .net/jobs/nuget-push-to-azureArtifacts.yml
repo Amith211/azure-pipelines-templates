@@ -2,11 +2,13 @@ parameters:
   jobName: 'DeployNugetAzureArtifacts'
   jobDdisplayName: 'Deploy to Azure Artifacts'
   pool: 'Default'
-  artifactName: 'nuget'
-  publishVstsFeed: ''
-  allowPackageConflicts: true
-  azureDevOpsOrg: ''
   environment: 'AzureArtifacts'
+  artifactName: 'nuget'
+  azureDevOpsOrg: ''
+  publishDevOpsFeed: ''
+  islegacyDevOpsUrl: false
+  nugetServerApiVersion: 'v3'
+  allowPackageConflicts: true
 
 jobs:
   - deployment: ${{ parameters.jobName }}
@@ -30,12 +32,34 @@ jobs:
           - task: Powershell@2
             name: nuGetPush
             displayName: 'Nuget Push'
+            env:
+              org: ${{ parameters.azureDevOpsOrg }}
+              feed: ${{ parameters.publishDevOpsFeed }}
+              isLegacyUrl: ${{ parameters.islegacyDevOpsUrl }}
+              apiVersion: ${{ parameters.nugetServerApiVersion }}
+              skipDiplicate: ${{ parameters.allowPackageConflicts }}
             inputs:
               targetType: inline
               script: |
-                 nuget push -ApiKey AzurePipeline -Source https://pkgs.dev.azure.com/${{ parameters.azureDevOpsOrg }}/_packaging/${{ parameters.publishVstsFeed }}/nuget/v3/index.json $(Build.ArtifactStagingDirectory)/**/*.nupkg -NoSymbols -SkipDuplicate ${{ parameters.allowPackageConflicts }}
+                $orgUrl = '';             
+
+                Write-Host "##[debug] isLegacyUrl:- $env:isLegacyUrl";
+                Write-Host "##[debug] isLeacyUrl true:- $($env:isLegacyUrl -eq $true)";
+
+                if($env:isLegacyUrl -eq $true)
+                {
+                  $orgUrl = "$env:ORG.pkgs.visualstudio.com"
+                } else
+                {
+                  $orgUrl = "pkgs.dev.azure.com/$env:ORG"
+                }
+
+                Write-Host "##[debug] url:- https://$orgUrl/_packaging/$env:FEED/nuget/$env:APIVERSION/index.json";
+
+                nuget push -ApiKey AzurePipeline -Source https://$orgUrl/_packaging/$env:FEED/nuget/$env:APIVERSION/index.json `
+                 $(Build.ArtifactStagingDirectory)/**/*.nupkg -NoSymbols -SkipDuplicate $env:SKIPDUPLICATE
     condition: > 
       and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), 
         or(eq(variables['Build.SourceBranch'], 'refs/heads/master'),
           startswith(variables['Build.SourceBranch'], 'refs/heads/release/'),
-          startswith(variables['Build.SourceBranch'], 'refs/heads/azure-pipelines-test')) )
+          startswith(variables['Build.SourceBranch'], 'refs/heads/azure-pipeline')) )

@@ -1,6 +1,7 @@
 parameters:
   dotNetCoreInstallerVersion: '2.2.300'
   pool: 'Default'
+  extraArguments: ''
 
 stages:
 - stage: build
@@ -31,12 +32,11 @@ stages:
       displayName: 'Build'
       inputs:
         command: 'build'
-        arguments: '--configuration $(BuildConfiguration)'
+        arguments: '${{ parameters.extraArguments }} --configuration $(BuildConfiguration)'
 
     - task: variabledehydration@0
       inputs:
         prefixes: 'GITVERSION,BUILD'
-        #outpath: $(Build.SourcesDirectory)
         outpath: '$(build.artifactstagingdirectory)/vars'
 
     - task: PublishPipelineArtifact@0

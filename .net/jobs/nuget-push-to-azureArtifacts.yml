@@ -49,7 +49,7 @@ jobs:
                 {
                   $baseUrl = "pkgs.dev.azure.com"
                 }
-                nuget push -ApiKey AzurePipeline -Source https://$baseUrl/$env:ORG/_packaging/$env:feed/nuget/$env:APIVERSION/index.json `
+                nuget push -ApiKey AzurePipeline -Source https://$baseUrl/$env:ORG/_packaging/$env:FEED/nuget/$env:APIVERSION/index.json `
                  $(Build.ArtifactStagingDirectory)/**/*.nupkg -NoSymbols -SkipDuplicate $env:SKIPDUPLICATE
     condition: > 
       and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), 

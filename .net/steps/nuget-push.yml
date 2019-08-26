@@ -1,0 +1,35 @@
+parameters:
+  artifactName: 'nuget'
+  #nuGetServiceConnections: ''
+  apiKeyVar: ''
+  serverApiVersion: 'v3'
+  serverSource: 'https://api.nuget.org/${{ parameters.nugetServerApiVersion }}/index.json'
+  packagesGlob: '$(Build.ArtifactStagingDirectory)/**/*.nupkg'
+  allowPackageConflicts: false
+
+steps:
+- task: DownloadPipelineArtifact@1
+  inputs:
+    artifactName: ${{ parameters.artifactName }}
+    targetPath: $(Build.ArtifactStagingDirectory)
+
+# ApiKeys not supported
+# - task: NuGetAuthenticate@0
+#   inputs:
+#     nuGetServiceConnections: ${{ parameters.nuGetServiceConnections }}
+
+- task: NuGetToolInstaller@1
+- task: Powershell@2
+  name: nuGetPush
+  displayName: 'Nuget Push'
+  env:
+    apiKey: ${{ parameters.nugetApiKeyVar }}
+    apiVersion: ${{ parameters.nugetServerApiVersion }}
+    source: ${{ parameters.nugetServerSource }}
+    packagesGlob: ${{ parameters.nugetPackagesGlob }}
+    allowPackageConflicts: ${{ parameters.allowPackageConflicts }}
+  inputs:
+    targetType: inline
+    script: |
+       nuget push -ApiKey $env:APIKEY -Source $env:SOURCE $env:PACKAGESGLOB `
+        -NoSymbols -SkipDuplicate $env:ALLOWPACKAGECONFLICTS

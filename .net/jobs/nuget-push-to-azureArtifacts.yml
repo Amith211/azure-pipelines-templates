@@ -30,8 +30,8 @@ jobs:
           - task: NuGetToolInstaller@1
 
           - task: Powershell@2
-            name: nuGetPush
-            displayName: 'Nuget Push'
+            name: getnuGetUrl
+            displayName: 'Get Nuget Server Url'
             env:
               org: ${{ parameters.azureDevOpsOrg }}
               feed: ${{ parameters.publishDevOpsFeed }}
@@ -56,8 +56,14 @@ jobs:
 
                 Write-Host "##[debug] url:- https://$orgUrl/_packaging/$env:FEED/nuget/$env:APIVERSION/index.json";
 
-                nuget push -ApiKey AzurePipeline -Source https://$orgUrl/_packaging/$env:FEED/nuget/$env:APIVERSION/index.json `
-                 $(Build.ArtifactStagingDirectory)/**/*.nupkg -NoSymbols -SkipDuplicate $env:SKIPDUPLICATE
+                $output = $orgUrl;
+
+                Write-Output "##vso[task.setvariable variable=nugetserverSource;isOutput=true]$output";
+          - template: ../steps/nuget-push.yml
+            parameters:
+              apiKeyVar: 'AzurePipeline'
+              serverSource: $(getnuGetUrl.nugetserverSource)
+              allowPackageConflicts: true
     condition: > 
       and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), 
         or(eq(variables['Build.SourceBranch'], 'refs/heads/master'),

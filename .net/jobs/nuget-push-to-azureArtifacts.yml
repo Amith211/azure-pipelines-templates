@@ -43,7 +43,12 @@ jobs:
               script: |
                 $orgUrl = '';
                 
-                Write-Verbose "isLegacyUrl:- $env:isLegacyUrl" -Verbose;
+                Write-Debug "Test";
+                Write-Debug "##[debug] Test2";
+                Write-Host "##[debug] Test3";
+
+
+                Write-Host "##vso[task.LogIssue type=debug;]isLegacyUrl:- $env:isLegacyUrl";
                 Write-Verbose "isLeacyUrl true:- $env:isLegacyUrl -eq $true" -Verbose;
 
                 if($env:isLegacyUrl -eq $true)

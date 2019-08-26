@@ -41,15 +41,15 @@ jobs:
             inputs:
               targetType: inline
               script: |
-                $baseUrl = '';
+                $orgUrl = '';
                 if($env:isLegacyUrl -eq $true)
                 {
-                  $baseUrl = "$env:ORG.pkgs.visualstudio.com"
+                  $orgUrl = "$env:ORG.pkgs.visualstudio.com"
                 } else
                 {
-                  $baseUrl = "pkgs.dev.azure.com"
+                  $orgUrl = "pkgs.dev.azure.com/$env:ORG"
                 }
-                nuget push -ApiKey AzurePipeline -Source https://$baseUrl/$env:ORG/_packaging/$env:FEED/nuget/$env:APIVERSION/index.json `
+                nuget push -ApiKey AzurePipeline -Source https://$orgUrl/_packaging/$env:FEED/nuget/$env:APIVERSION/index.json `
                  $(Build.ArtifactStagingDirectory)/**/*.nupkg -NoSymbols -SkipDuplicate $env:SKIPDUPLICATE
     condition: > 
       and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), 

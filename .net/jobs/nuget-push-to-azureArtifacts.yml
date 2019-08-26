@@ -44,7 +44,7 @@ jobs:
                 $orgUrl = '';             
 
                 Write-Host "##[debug] isLegacyUrl:- $env:isLegacyUrl";
-                Write-Host "##[debug] isLeacyUrl true:- $env:isLegacyUrl -eq $true";
+                Write-Host "##[debug] isLeacyUrl true:- $($env:isLegacyUrl -eq $true");
 
                 if($env:isLegacyUrl -eq $true)
                 {

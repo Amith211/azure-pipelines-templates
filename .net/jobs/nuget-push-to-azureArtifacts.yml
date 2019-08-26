@@ -42,6 +42,10 @@ jobs:
               targetType: inline
               script: |
                 $orgUrl = '';
+                
+                Write-Debug "isLegacyUrl:- $env:isLegacyUrl";
+                Write-Debug "isLeacyUrl true:- $env:isLegacyUrl -eq $true";
+
                 if($env:isLegacyUrl -eq $true)
                 {
                   $orgUrl = "$env:ORG.pkgs.visualstudio.com"
@@ -49,6 +53,9 @@ jobs:
                 {
                   $orgUrl = "pkgs.dev.azure.com/$env:ORG"
                 }
+
+                Write-Debug "url:- https://$orgUrl/_packaging/$env:FEED/nuget/$env:APIVERSION/index.json";
+
                 nuget push -ApiKey AzurePipeline -Source https://$orgUrl/_packaging/$env:FEED/nuget/$env:APIVERSION/index.json `
                  $(Build.ArtifactStagingDirectory)/**/*.nupkg -NoSymbols -SkipDuplicate $env:SKIPDUPLICATE
     condition: > 

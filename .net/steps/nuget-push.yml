@@ -31,5 +31,6 @@ steps:
   inputs:
     targetType: inline
     script: |
+       Write-Output "##[debug] $env:SOURCE";
        nuget push -ApiKey $env:APIKEY -Source $env:SOURCE $env:PACKAGESGLOB `
         -NoSymbols -SkipDuplicate $env:ALLOWPACKAGECONFLICTS

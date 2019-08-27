@@ -24,7 +24,7 @@ jobs:
             parameters:
               artifactName: ${{ parameters.artifactName }}
               nugetToolVersion: ${{ parameters.nugetToolVersion }}
-              apiKeyVar: ${{ coalesce(parameters.apiKeyVar, '$(nuGet_Org_ApiKey') ) }} 
+              apiKeyVar: ${{ coalesce(parameters.apiKeyVar, '$(nuGet_Org_ApiKey)'' ) }} 
               serverApiVersion: ${{ parameters.serverApiVersion }}
               packagesGlob: ${{ parameters.packagesGlob }}
               allowPackageConflicts: ${{ parameters.allowPackageConflicts }}

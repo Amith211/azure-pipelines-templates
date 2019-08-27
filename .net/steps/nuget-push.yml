@@ -3,7 +3,7 @@ parameters:
   #nuGetServiceConnections: ''
   apiKeyVar: ''
   serverApiVersion: 'v3'
-  serverSource: https://api.nuget.org/parameters['serverApiVersion']/index.json
+  serverSource: ''
   packagesGlob: '$(Build.ArtifactStagingDirectory)/**/*.nupkg'
   allowPackageConflicts: false
 
@@ -25,7 +25,7 @@ steps:
   env:
     apiKey: ${{ parameters.apiKeyVar }}
     apiVersion: ${{ parameters.serverApiVersion }}
-    source: ${{ parameters.serverSource }}
+    source: ${{ coalesce(parameters.serverSource, format('https://api.nuget.org/{0}/index.json', parameters.serverApiVersion)) }}
     packagesGlob: ${{ parameters.packagesGlob }}
     allowPackageConflicts: ${{ parameters.allowPackageConflicts }}
   inputs:

@@ -3,7 +3,7 @@ parameters:
   #nuGetServiceConnections: ''
   apiKeyVar: ''
   serverApiVersion: 'v3'
-  serverSource: 'https://api.nuget.org/${{ parameters.nugetServerApiVersion }}/index.json'
+  serverSource: https://api.nuget.org/parameters['serverApiVersion']/index.json
   packagesGlob: '$(Build.ArtifactStagingDirectory)/**/*.nupkg'
   allowPackageConflicts: false
 
@@ -23,10 +23,10 @@ steps:
   name: nuGetPush
   displayName: 'Nuget Push'
   env:
-    apiKey: ${{ parameters.nugetApiKeyVar }}
-    apiVersion: ${{ parameters.nugetServerApiVersion }}
-    source: ${{ parameters.nugetServerSource }}
-    packagesGlob: ${{ parameters.nugetPackagesGlob }}
+    apiKey: ${{ parameters.apiKeyVar }}
+    apiVersion: ${{ parameters.serverApiVersion }}
+    source: ${{ parameters.serverSource }}
+    packagesGlob: ${{ parameters.packagesGlob }}
     allowPackageConflicts: ${{ parameters.allowPackageConflicts }}
   inputs:
     targetType: inline

@@ -5,13 +5,19 @@ parameters:
   jobDisplayName: 'Pack Nuget'
   pool: 'Default'
   artifactName: 'nuget'
-  publishAzureJobName: 'DeployNugetAzureArtifacts'
-  publishAzureJobDisplayName: 'Deploy Preview to Azure Artifacts'
-  publishVstsFeed: ''
+  environment: ''
+  azurePublishJobName: 'DeployNugetAzureArtifacts'
+  azurePublishJobDisplayName: 'Deploy Preview to Azure Artifacts'
+  azureDevOpsOrg: ''
+  azureDevOpsFeed: ''
+  azureIslegacyDevOpsUrl: false
+  azureNugetServerApiVersion: 'v3'
   allowPackageConflicts: true
-  publishNugetJobName: 'DeployNuget'
-  publishNugetJobDisplayName: 'Deploy to Nuget'
-  publishFeedCredentials: ''
+  nugetPublishJobName: 'DeployNuget'
+  nugetPublishJobDisplayName: 'Deploy to Nuget'
+  nuGetServiceConnections: ''
+  nugetApiKeyVar: ''
+  nugetPackageVersion: ''
   
 stages:
 - stage: ${{ parameters.stageName }}
@@ -26,30 +32,36 @@ stages:
     - task: DownloadPipelineArtifact@1
       inputs:
         artifactName: 'drop'
-        #targetPath: $(Build.ArtifactStagingDirectory)
         targetPath: '$(Build.SourcesDirectory)'
-    
+   
     - template: ../steps/nuget-pack.yml
       parameters:
         artifactName: ${{ parameters.artifactName }}
 
   - template: ../jobs/nuget-deploy-to-azureArtifacts.yml
     parameters:
-      jobName: ${{ parameters.publishAzureJobName }}
-      jobDisplayName: ${{ parameters.publishAzureJobDisplayName }}
+      jobName: ${{ parameters.azurePublishJobName }}
+      jobDisplayName: ${{ parameters.azurePublishJobDisplayName }}
       pool: ${{ parameters.pool }}
+      environment: ${{ parameters.environment }}
       artifactName: ${{ parameters.artifactName }}
-      publishVstsFeed: ${{ parameters.publishVstsFeed }}
+      azureDevOpsOrg: ${{ parameters.azureDevOpsOrg }}
+      azureDevOpsFeed: ${{ parameters.azureDevOpsFeed }}
+      azureIslegacyDevOpsUrl: ${{ parameters.azureIslegacyDevOpsUrl }}
+      azureNugetServerApiVersion: ${{ parameters.azureNugetServerApiVersion }}
       allowPackageConflicts: ${{ parameters.allowPackageConflicts }}
 
   - template: ../jobs/nuget-deploy-to-nuget.yml
     parameters:
-      jobName: ${{parameters.publishNugetJobName }}
-      jobDisplayName: ${{ parameters.publishNugetJobDisplayName }}
+      jobName: ${{parameters.nugetPublishJobName }}
+      jobDisplayName: ${{ parameters.nugetPublishJobDisplayName }}
       pool: ${{ parameters.pool }}
+      environment: ${{ parameters.environment }}
       artifactName: ${{ parameters.artifactName }}
-      publishFeedCredentials: ${{parameters.publishFeedCredentials }}
+      nuGetServiceConnections: ${{ parameters.azureNuGetServiceConnections }}
       allowPackageConflicts: ${{ parameters.allowPackageConflicts }}
+      nugetPackageVersion: ${{ parameters.nugetPackageVersion }}
+      publishFeedCredentials: ${{parameters.publishFeedCredentials }}
       
 
           

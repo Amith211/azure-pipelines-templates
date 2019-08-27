@@ -2,47 +2,34 @@ parameters:
   jobName: 'DeployNuget'
   jobDisplayName: 'Deploy to Nuget'
   pool: 'Default'
-  artifactName: 'nuget'
-  nuGetServiceConnections: ''
-  allowPackageConflicts: true
-  nugetPackageVersion: ''
   environment: 'NuGet_Org'
+  artifactName: 'nuget'
+  nugetToolVersion: ''
+  #nuGetServiceConnections: ''
+  apiKeyVar: ''
+  serverApiVersion: ''
+  packagesGlob: ''
+  allowPackageConflicts: true
 
 jobs:
   - deployment: ${{ parameters.jobName }}
     displayName: ${{ parameters.jobDisplayName }}
     pool: ${{ parameters.pool }}
-    variables:
-        nugetVersion: ${{ parameters.nugetPackageVersion }}
-        isDuplicate: false
-        allowPackageConflicts: ${{ parameters.allowPackageConflicts }}
     environment: ${{ parameters.environment }}
     strategy:
       runOnce:
         deploy:
           steps:
-          - task: DownloadPipelineArtifact@1
-            inputs:
+          - template: ../steps/nuget-push.yml
+            parameters:
               artifactName: ${{ parameters.artifactName }}
-              targetPath: $(Build.ArtifactStagingDirectory)
-
-          # ApiKeys not supported
-          # - task: NuGetAuthenticate@0
-          #   inputs:
-          #     nuGetServiceConnections: ${{ parameters.nuGetServiceConnections }}
-
-          - task: NuGetToolInstaller@1
-
-          - task: Powershell@2
-            name: nuGetPush
-            displayName: 'Nuget Push'
-            env:
-              apiKey: $(nuGet_Org_ApiKey)
-            inputs:
-              targetType: inline
-              script: |
-                 nuget push -ApiKey $env:apiKey -Source https://api.nuget.org/v3/index.json $(Build.ArtifactStagingDirectory)/**/*.nupkg  `
-                  -NoSymbols -SkipDuplicate $env:ALLOWPACKAGECONFLICTS
+              nugetToolVersion: ${{ parameters.nugetToolVersion }}
+              apiKeyVar: ${{ coalesce(parameters.apiKeyVar, '$(nuGet_Org_ApiKey)' ) }} 
+              ${{ if ne(parameters.serverApiVersion, '') }}:
+                serverApiVersion: ${{ parameters.serverApiVersion }}
+              ${{ if ne(parameters.packagesGlob, '') }}:
+                packagesGlob: ${{ parameters.packagesGlob }}
+              allowPackageConflicts: ${{ parameters.allowPackageConflicts }}
     condition: > 
       and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), 
         or(eq(variables['Build.SourceBranch'], 'refs/heads/master'),

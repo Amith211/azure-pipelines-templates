@@ -61,6 +61,7 @@ jobs:
                 Write-Output "##vso[task.setvariable variable=nugetserverSource;isOutput=true]$output";
           - template: ../steps/nuget-push.yml
             parameters:
+              artifactName: ${{ parameters.artifactName }}
               apiKeyVar: 'AzurePipeline'
               serverSource: $(getnuGetUrl.nugetserverSource)
               allowPackageConflicts: true

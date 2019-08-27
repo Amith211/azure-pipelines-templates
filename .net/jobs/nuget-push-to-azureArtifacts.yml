@@ -54,7 +54,7 @@ jobs:
                   $orgUrl = "pkgs.dev.azure.com/$env:ORG"
                 }
 
-                $output = https://$orgUrl/_packaging/$env:FEED/nuget/$env:APIVERSION/index.json;
+                $output = "https://$orgUrl/_packaging/$env:FEED/nuget/$env:APIVERSION/index.json";
 
                 Write-Output "##vso[task.setvariable variable=nugetserverSource;isOutput=true]$output";
           - template: ../steps/nuget-push.yml

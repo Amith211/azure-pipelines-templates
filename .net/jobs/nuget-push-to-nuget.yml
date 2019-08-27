@@ -6,9 +6,9 @@ parameters:
   artifactName: 'nuget'
   nugetToolVersion: ''
   #nuGetServiceConnections: ''
-  apiKeyVar: ~
+  apiKeyVar: ''
   serverApiVersion: ''
-  packagesGlob: ~
+  packagesGlob: ''
   allowPackageConflicts: true
 
 jobs:
@@ -27,7 +27,8 @@ jobs:
               apiKeyVar: ${{ coalesce(parameters.apiKeyVar, '$(nuGet_Org_ApiKey)' ) }} 
               ${{ if ne(parameters.serverApiVersion, '') }}:
                 serverApiVersion: ${{ parameters.serverApiVersion }}
-              packagesGlob: ${{ parameters.packagesGlob }}
+              ${{ if ne(parameters.packagesGlob, '') }}:
+                packagesGlob: ${{ parameters.packagesGlob }}
               allowPackageConflicts: ${{ parameters.allowPackageConflicts }}
     condition: > 
       and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), 

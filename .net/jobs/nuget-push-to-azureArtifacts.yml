@@ -7,7 +7,8 @@ parameters:
   azureDevOpsOrg: ''
   publishDevOpsFeed: ''
   islegacyDevOpsUrl: false
-  nugetServerApiVersion: 'v3'
+  nugetServerApiVersion: ''
+  packagesGlob: ''
   allowPackageConflicts: true
 
 jobs:
@@ -62,7 +63,9 @@ jobs:
               artifactName: ${{ parameters.artifactName }}
               apiKeyVar: 'AzurePipeline'
               serverSource: $(getnuGetUrl.nugetserverSource)
-              allowPackageConflicts: true
+              ${{ if ne(parameters.packagesGlob, '') }}:
+                packagesGlob: ${{ parameters.packagesGlob }}
+              allowPackageConflicts: ${{ parameters.allowPackageConflicts }}
     condition: > 
       and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), 
         or(eq(variables['Build.SourceBranch'], 'refs/heads/master'),

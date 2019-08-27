@@ -7,7 +7,7 @@ parameters:
   nugetToolVersion: ''
   #nuGetServiceConnections: ''
   apiKeyVar: ~
-  serverApiVersion:
+  serverApiVersion: ''
   packagesGlob: ~
   allowPackageConflicts: true
 
@@ -25,7 +25,7 @@ jobs:
               artifactName: ${{ parameters.artifactName }}
               nugetToolVersion: ${{ parameters.nugetToolVersion }}
               apiKeyVar: ${{ coalesce(parameters.apiKeyVar, '$(nuGet_Org_ApiKey)' ) }} 
-              serverApiVersion: ${{ parameters.serverApiVersion }}
+              ${{ if ne(parameters.serverApiVersion, '') }}:serverApiVersion: ${{ parameters.serverApiVersion }}
               packagesGlob: ${{ parameters.packagesGlob }}
               allowPackageConflicts: ${{ parameters.allowPackageConflicts }}
     condition: > 

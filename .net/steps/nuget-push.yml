@@ -3,7 +3,7 @@ parameters:
   nugetToolVersion: ''
   #nuGetServiceConnections: ''
   apiKeyVar: ''
-  serverApiVersion: coalesce(parameters.serverApiVersion, 'v3')
+  serverApiVersion: 'v3'
   serverSource: ''
   packagesGlob: '$(Build.ArtifactStagingDirectory)/**/*.nupkg'
   allowPackageConflicts: false
@@ -25,7 +25,7 @@ steps:
   displayName: 'Nuget Push'
   env:
     apiKey: ${{ parameters.apiKeyVar }}
-    apiVersion: ${{ coalesce(parameters.serverApiVersion, 'v3') }}
+    apiVersion: ${{ parameters.serverApiVersion }}
     source: ${{ coalesce(parameters.serverSource, format('https://api.nuget.org/{0}/index.json', parameters.serverApiVersion)) }}
     packagesGlob: ${{ parameters.packagesGlob }}
     allowPackageConflicts: ${{ parameters.allowPackageConflicts }}

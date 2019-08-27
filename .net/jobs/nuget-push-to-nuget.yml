@@ -7,7 +7,7 @@ parameters:
   nugetToolVersion: ''
   #nuGetServiceConnections: ''
   apiKeyVar: ~
-  serverApiVersion: ~
+  serverApiVersion:
   packagesGlob: ~
   allowPackageConflicts: true
 

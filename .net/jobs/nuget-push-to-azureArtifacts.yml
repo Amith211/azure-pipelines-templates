@@ -7,7 +7,7 @@ parameters:
   azureDevOpsOrg: ''
   publishDevOpsFeed: ''
   islegacyDevOpsUrl: false
-  nugetServerApiVersion: ''
+  nugetServerApiVersion: 'v3'
   packagesGlob: ''
   allowPackageConflicts: true
 

@@ -26,10 +26,7 @@ jobs:
             inputs:
               artifactName: ${{ parameters.artifactName }}
               targetPath: $(Build.ArtifactStagingDirectory)
-          
           - task: NuGetAuthenticate@0
-          - task: NuGetToolInstaller@1
-
           - task: Powershell@2
             name: getnuGetUrl
             displayName: 'Get Nuget Server Url'

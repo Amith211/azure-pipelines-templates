@@ -2,20 +2,19 @@ parameters:
   jobName: 'DeployNuget'
   jobDisplayName: 'Deploy to Nuget'
   pool: 'Default'
-  artifactName: 'nuget'
-  nuGetServiceConnections: ''
-  allowPackageConflicts: true
-  nugetPackageVersion: ''
   environment: 'NuGet_Org'
+  artifactName: 'nuget'
+  nugetToolVersion: ''
+  #nuGetServiceConnections: ''
+  apiKeyVar: ~
+  serverApiVersion: ~
+  packagesGlob: ~
+  allowPackageConflicts: true
 
 jobs:
   - deployment: ${{ parameters.jobName }}
     displayName: ${{ parameters.jobDisplayName }}
     pool: ${{ parameters.pool }}
-    variables:
-        nugetVersion: ${{ parameters.nugetPackageVersion }}
-        isDuplicate: false
-        allowPackageConflicts: ${{ parameters.allowPackageConflicts }}
     environment: ${{ parameters.environment }}
     strategy:
       runOnce:
@@ -23,8 +22,12 @@ jobs:
           steps:
           - template: ../steps/nuget-push.yml
             parameters:
-              apiKeyVar: $(nuGet_Org_ApiKey)
-              allowPackageConflicts: true
+              artifactName: ${{ parameters.artifactName }}
+              nugetToolVersion: ${{ parameters.nugetToolVersion }}
+              apiKeyVar: ${{ coalesce(parameters.apiKeyVar, $(nuGet_Org_ApiKey) ) }} 
+              serverApiVersion: ${{ parameters.serverApiVersion }}
+              packagesGlob: ${{ parameters.packagesGlob }}
+              allowPackageConflicts: ${{ parameters.allowPackageConflicts }}
     condition: > 
       and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), 
         or(eq(variables['Build.SourceBranch'], 'refs/heads/master'),

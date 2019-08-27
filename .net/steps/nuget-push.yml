@@ -1,5 +1,6 @@
 parameters:
   artifactName: 'nuget'
+  nugetToolVersion: ''
   #nuGetServiceConnections: ''
   apiKeyVar: ''
   serverApiVersion: 'v3'
